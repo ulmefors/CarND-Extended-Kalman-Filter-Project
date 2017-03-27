@@ -6,3 +6,9 @@ build/
 
 # editor config
 .vscode/
+
+# compiled files
+*.o
+
+# build files
+cmake-build-debug
