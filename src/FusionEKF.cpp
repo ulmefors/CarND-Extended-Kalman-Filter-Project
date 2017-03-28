@@ -84,7 +84,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
    ****************************************************************************/
 
   // Timestep in seconds
-  long dt = (measurement_pack.timestamp_ - previous_timestamp_)/1000000;
+  double dt = (measurement_pack.timestamp_ - previous_timestamp_)/1000000.0;
   previous_timestamp_ = measurement_pack.timestamp_;
 
   ekf_.F_<< 1, 0, dt, 0,
@@ -95,9 +95,9 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   int noise_ax = 9;
   int noise_ay = 9;
 
-  long dt2 = dt*dt;
-  long dt3 = dt2*dt;
-  long dt4 = dt3*dt;
+  double dt2 = dt*dt;
+	double dt3 = dt2*dt;
+	double dt4 = dt3*dt;
 
   ekf_.Q_<< dt4/4*noise_ax, 0, dt3/2*noise_ax, 0,
             0, dt4/4*noise_ay, 0, dt3/2*noise_ay,
