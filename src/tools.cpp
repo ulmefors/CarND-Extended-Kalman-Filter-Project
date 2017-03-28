@@ -9,7 +9,11 @@ Tools::Tools() {}
 
 Tools::~Tools() {}
 
-// Returns Root Mean Squared Error of estimations compared to ground truth
+/**
+ * @param estimations Estimated cartesian position, velocity
+ * @param ground_truth True cartesian position, velocity
+ * @return Root Mean Squared Error of estimations compared to ground truth
+ */
 VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
                               const vector<VectorXd> &ground_truth) {
     VectorXd rmse(4);
@@ -39,7 +43,10 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
     return rmse;
 }
 
-// Returns the Jacobian matrix for localized linear conversion from Cartesian to Polar Coordinates
+/**
+ * @param x_state Cartesian position, velocity
+ * @return Jacobian matrix for localized linear conversion from Cartesian to Polar Coordinates
+ */
 MatrixXd Tools::CalculateJacobian(const VectorXd& x_state){
 
     float RAD_THRESHOLD = 0.00001;
