@@ -27,9 +27,11 @@ void KalmanFilter::Predict() {
 
 void KalmanFilter::Update(const VectorXd &z) {
 
+  MatrixXd Ht = H_.transpose();
+
   VectorXd y = z - H_*x_;
-  MatrixXd S = H_*P_*H_.transpose() + R_;
-  MatrixXd K = P_*H_.transpose()*S.inverse();
+  MatrixXd S = H_*P_*Ht + R_;
+  MatrixXd K = P_*Ht*S.inverse();
   MatrixXd I = MatrixXd::Identity(x_.size(), x_.size());
 
   x_ = x_ + K*y;

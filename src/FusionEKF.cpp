@@ -83,13 +83,26 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
    *  Prediction
    ****************************************************************************/
 
-  /**
-   TODO:
-     * Update the state transition matrix F according to the new elapsed time.
-      - Time is measured in seconds.
-     * Update the process noise covariance matrix.
-     * Use noise_ax = 9 and noise_ay = 9 for your Q matrix.
-   */
+  // Timestep in seconds
+  long dt = (measurement_pack.timestamp_ - previous_timestamp_)/1000000;
+  previous_timestamp_ = measurement_pack.timestamp_;
+
+  ekf_.F_<< 1, 0, dt, 0,
+            0, 1, 0, dt,
+            0, 0, 1, 0,
+            0, 0, 0, 1;
+
+  int noise_ax = 9;
+  int noise_ay = 9;
+
+  long dt2 = dt*dt;
+  long dt3 = dt2*dt;
+  long dt4 = dt3*dt;
+
+  ekf_.Q_<< dt4/4*noise_ax, 0, dt3/2*noise_ax, 0,
+            0, dt4/4*noise_ay, 0, dt3/2*noise_ay,
+            dt3/2*noise_ax, 0, dt2*noise_ax, 0,
+            0, dt3/2*noise_ay, 0, dt2*noise_ay;
 
   ekf_.Predict();
 
