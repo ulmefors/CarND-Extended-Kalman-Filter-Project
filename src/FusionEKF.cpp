@@ -42,7 +42,6 @@ FusionEKF::FusionEKF() {
 
 	// covariance matrix
 	ekf_.P_ = MatrixXd::Identity(4, 4);
-
 }
 
 /**
@@ -125,9 +124,13 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
     // Radar updates
 		ekf_.R_ = R_radar_;
-		ekf_.H_ = tools.CalculateJacobian(ekf_.x_);
-		ekf_.UpdateEKF(z);
+		Hj_ = tools.CalculateJacobian(ekf_.x_);
 
+		// Top-left element is NaN if division by zero - ignore measurement
+		if (!isnan(Hj_(0,0))) {
+			ekf_.H_ = Hj_;
+			ekf_.UpdateEKF(z);
+		}
   } else {
     // Laser updates
 		ekf_.R_ = R_laser_;
