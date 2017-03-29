@@ -1,7 +1,8 @@
 #include "kalman_filter.h"
-
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
+using Eigen::Vector3d;
+using Eigen::Vector4d;
 
 KalmanFilter::KalmanFilter() {}
 
@@ -18,29 +19,50 @@ void KalmanFilter::Init(VectorXd &x_in, MatrixXd &P_in, MatrixXd &F_in,
 }
 
 void KalmanFilter::Predict() {
-  // Zero noise
+  // Noise average is zero
   VectorXd u = VectorXd::Zero(x_.size());
 
   x_ = F_*x_ + u;
   P_ = F_*P_*F_.transpose() + Q_;
 }
 
-void KalmanFilter::Update(const VectorXd &z) {
-
-  MatrixXd Ht = H_.transpose();
-
+void KalmanFilter::UpdateKF(const VectorXd &z) {
   VectorXd y = z - H_*x_;
-  MatrixXd S = H_*P_*Ht + R_;
-  MatrixXd K = P_*Ht*S.inverse();
-  MatrixXd I = MatrixXd::Identity(x_.size(), x_.size());
-
-  x_ = x_ + K*y;
-  P_ = (I - K*H_)*P_;
+	Update(y);
 }
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
-  /**
-  TODO:
-    * update the state by using Extended Kalman Filter equations
-  */
+	VectorXd y = z - CartesianToPolar(x_);
+	Update(y);
+}
+
+void KalmanFilter::Update(const Eigen::VectorXd &y) {
+	MatrixXd Ht = H_.transpose();
+	MatrixXd S = H_*P_*Ht + R_;
+	MatrixXd K = P_*Ht*S.inverse();
+	MatrixXd I = MatrixXd::Identity(x_.size(), x_.size());
+
+	// Update the state and covariance matrices.
+	x_ = x_ + K*y;
+	P_ = (I - K*H_)*P_;
+}
+
+Vector3d KalmanFilter::CartesianToPolar(const Vector4d &x){
+	double px = x(0);
+	double py = x(1);
+	double vx = x(2);
+	double vy = x(3);
+
+	double rho = sqrt(px*px + py*py);
+	double phi = atan(py/px);
+	double rho_dot = (px*vx + py*vy)/rho;
+
+	// Normalize to -PI to PI
+	while (phi > M_PI || phi < -M_PI) {
+		if (phi > 0) phi -= 2*M_PI;
+		else phi += 2*M_PI;
+	}
+
+	Vector3d h_x {rho, phi, rho_dot};
+	return h_x;
 }

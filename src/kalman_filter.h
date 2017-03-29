@@ -56,7 +56,7 @@ public:
    * Updates the state by using standard Kalman Filter equations
    * @param z The measurement at k+1
    */
-  void Update(const Eigen::VectorXd &z);
+  void UpdateKF(const Eigen::VectorXd &z);
 
   /**
    * Updates the state by using Extended Kalman Filter equations
@@ -64,6 +64,18 @@ public:
    */
   void UpdateEKF(const Eigen::VectorXd &z);
 
+private:
+	/**
+	 * @param x Position and velocities in x,y coordinates
+	 * @return rho, phi rho_dot in polar coordinates
+	 */
+	Eigen::Vector3d CartesianToPolar(const Eigen::Vector4d &x);
+
+	/**
+	 * Updates the state using calculated difference between prediction and measurement
+	 * @param y
+	 */
+	void Update(const Eigen::VectorXd &y);
 };
 
 #endif /* KALMAN_FILTER_H_ */

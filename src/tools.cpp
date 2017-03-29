@@ -25,15 +25,13 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
     long nb_truth = ground_truth.size();
 
     // Verify that number of measurements matches number of ground truth entries
-    if (nb_meas == 0 || nb_meas != nb_truth)
-    {
+    if (nb_meas == 0 || nb_meas != nb_truth) {
         std::cout << "Error! Tools::CalculateRMSE() - Invalid Measurement/Ground Truth length" << std::endl;
         return rmse;
     }
 
     // Sum residuals and calculate mean squared error
-    for (int i = 0; i < nb_meas; i++)
-    {
+    for (int i = 0; i < nb_meas; i++) {
         residual = estimations[i] - ground_truth[i];
         residual = residual.array() * residual.array();
         sum_sq_error = sum_sq_error + residual;
@@ -66,12 +64,9 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state){
     float rho3 = std::pow(rho1, 3);
 
     // Verify that radius is not (close to) zero
-    if (rho1 < RAD_THRESHOLD)
-    {
+    if (rho1 < RAD_THRESHOLD) {
         std::cout << "Error! Tools::CalculateJacobian() - Division by zero" << std::endl;
-    }
-    else
-    {
+    } else {
         Hj<<px/rho1,    py/rho1,    0,  0,
             -py/rho2,   px/rho2,    0,  0,
             py*(vx*py-vy*px)/rho3, px*(vy*px-vx*py)/rho3, px/rho1,  py/rho1;
