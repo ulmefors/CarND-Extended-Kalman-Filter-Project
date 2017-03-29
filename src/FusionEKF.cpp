@@ -41,7 +41,7 @@ FusionEKF::FusionEKF() {
   */
 
 	// covariance matrix
-	ekf_.P_ = 1000 * MatrixXd::Identity(4, 4);
+	ekf_.P_ = MatrixXd::Identity(4, 4);
 
 }
 
@@ -97,6 +97,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   double dt = (measurement_pack.timestamp_ - previous_timestamp_)/1000000.0;
   previous_timestamp_ = measurement_pack.timestamp_;
 
+	ekf_.F_ = MatrixXd(4, 4);
   ekf_.F_<< 1, 0, dt, 0,
             0, 1, 0, dt,
             0, 0, 1, 0,
@@ -109,6 +110,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 	double dt3 = dt2*dt;
 	double dt4 = dt3*dt;
 
+	ekf_.Q_ = MatrixXd(4, 4);
   ekf_.Q_<< dt4/4*noise_ax, 0, dt3/2*noise_ax, 0,
             0, dt4/4*noise_ay, 0, dt3/2*noise_ay,
             dt3/2*noise_ax, 0, dt2*noise_ax, 0,
