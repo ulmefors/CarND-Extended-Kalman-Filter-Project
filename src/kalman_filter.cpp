@@ -54,14 +54,8 @@ Vector3d KalmanFilter::CartesianToPolar(const Vector4d &x){
 	double vy = x(3);
 
 	double rho = sqrt(px*px + py*py);
-	double phi = atan(py/px);
+	double phi = atan2(py, px);
 	double rho_dot = (px*vx + py*vy)/rho;
-
-	// Normalize to -PI to PI
-	while (phi > M_PI || phi < -M_PI) {
-		if (phi > 0) phi -= 2*M_PI;
-		else phi += 2*M_PI;
-	}
 
 	Vector3d h_x {rho, phi, rho_dot};
 	return h_x;
