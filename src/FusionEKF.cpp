@@ -126,8 +126,9 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 		ekf_.R_ = R_radar_;
 		Hj_ = tools.CalculateJacobian(ekf_.x_);
 
-		// Top-left element is NaN if division by zero - ignore measurement
-		if (!isnan(Hj_(0,0))) {
+		// Ignore measurement if Hj is all zero (division by zero)
+		MatrixXd zero_matrix = MatrixXd::Zero(Hj_.rows(), Hj_.cols());
+		if ( Hj_ !=  zero_matrix) {
 			ekf_.H_ = Hj_;
 			ekf_.UpdateEKF(z);
 		}

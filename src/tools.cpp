@@ -43,7 +43,7 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
 
 /**
  * @param x_state Cartesian position, velocity
- * @return Jacobian matrix. Element (0,0) set to NaN if division by zero.
+ * @return Jacobian matrix. Matrix with all zeros if division by zero.
  */
 MatrixXd Tools::CalculateJacobian(const VectorXd& x_state){
 
@@ -67,12 +67,10 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state){
     if (rho1 < RAD_THRESHOLD) {
 			std::cout << "Error! Tools::CalculateJacobian() - Division by zero" << std::endl;
 			Hj.setZero();
-			Hj(0,0) = nan(0);
     } else {
       Hj<<px/rho1,    py/rho1,    0,  0,
           -py/rho2,   px/rho2,    0,  0,
           py*(vx*py-vy*px)/rho3, px*(vy*px-vx*py)/rho3, px/rho1,  py/rho1;
     }
-
     return Hj;
 }
