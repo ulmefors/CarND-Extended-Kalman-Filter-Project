@@ -8,7 +8,7 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 using std::vector;
 
-/*
+/**
  * Constructor.
  */
 FusionEKF::FusionEKF() {
@@ -34,14 +34,6 @@ FusionEKF::FusionEKF() {
 	// measurement matrix - laser
 	H_laser_ << 1, 0, 0, 0,
 							0, 1, 0, 0;
-  /**
-  TODO:
-    * Finish initializing the FusionEKF.
-    * Set the process and measurement noises
-  */
-
-	// covariance matrix
-	ekf_.P_ = MatrixXd::Identity(4, 4);
 }
 
 /**
@@ -57,12 +49,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
    *  Initialization
    ****************************************************************************/
   if (!is_initialized_) {
-    /**
-    TODO:
-      * Initialize the state ekf_.x_ with the first measurement.
-      * Create the covariance matrix.
-      * Remember: you'll need to convert radar from polar to cartesian coordinates.
-    */
+
     // first measurement
     cout << "EKF: " << endl;
     ekf_.x_ = VectorXd(4);
@@ -81,6 +68,9 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     }
 		ekf_.x_(0) = px;
 		ekf_.x_(1) = py;
+
+		// covariance matrix
+		ekf_.P_ = MatrixXd::Identity(4, 4);
 
     // done initializing, no need to predict or update
     is_initialized_ = true;
@@ -128,7 +118,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
 		// Ignore measurement if Hj is all zero (division by zero)
 		MatrixXd zero_matrix = MatrixXd::Zero(Hj_.rows(), Hj_.cols());
-		if ( Hj_ !=  zero_matrix) {
+		if (Hj_ !=  zero_matrix) {
 			ekf_.H_ = Hj_;
 			ekf_.UpdateEKF(z);
 		}
